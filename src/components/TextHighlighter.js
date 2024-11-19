@@ -32,10 +32,8 @@ const TextHighlighter = ({ inputText, defaultText, onHighlightChange, defaultSta
   };
 
   const highlightSubstring = (text, substring) => {
-    console.log(substring)
-    console.log(text)
     const parts = text.split(substring);
-    console.log(parts)
+    // console.log(parts)
     if (parts.length > 1) {
       return (
         <>

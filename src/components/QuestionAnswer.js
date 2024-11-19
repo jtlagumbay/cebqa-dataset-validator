@@ -5,6 +5,7 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
     const { context, question, answer, answer_start, answer_end, context_start, context_end } = dataset;
     const {pseudonymized_body} = article
     const [updatedDataset, setUpdatedDataset] = useState(dataset)
+
     
     // Callback to update the highlighted answer
     const handleAnswerHighlightChange = useCallback(({text, start_index, end_index}) => {
@@ -30,6 +31,7 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
 
     useEffect(() => {
         // console.log("Updated dataset:", updatedDataset); // Check updatedDataset here
+        handleDatasetChange(updatedDataset);
     }, [updatedDataset]); 
   
     return (
@@ -55,6 +57,7 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
             <p><strong>Range: </strong>{answer_start}:{answer_end}</p>
             <p><strong>Final: </strong>{updatedDataset.answer_start}:{updatedDataset.answer_end}</p>
             <TextHighlighter
+                key={updatedDataset.context}
                 inputText={updatedDataset.context}
                 defaultText={answer}
                 onHighlightChange={handleAnswerHighlightChange}
