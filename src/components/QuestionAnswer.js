@@ -29,6 +29,14 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
         }));
     }, []);
 
+        const handleQuestionChange = (e) => {
+        const newQuestion = e.target.value;
+        setUpdatedDataset(prevState => ({
+            ...prevState,
+            "question": newQuestion,
+        }));
+    };
+
     useEffect(() => {
         // console.log("Updated dataset:", updatedDataset); // Check updatedDataset here
         handleDatasetChange(updatedDataset);
@@ -37,7 +45,15 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
     return (
         <div>
             <h4>Question</h4>
-            <p>{question}</p>
+            <p><strong>Original: </strong>{question}</p>
+            {/* Editable input for the question */}
+            <input 
+                type="text" 
+                value={updatedDataset.question} 
+                onChange={handleQuestionChange} 
+                className="form-control" 
+                placeholder="Question"
+            />
             <h4>Context</h4>
             <p><strong>Original: </strong>{context}</p>
             <p><strong>Final: </strong>{updatedDataset.context}</p>
@@ -54,7 +70,7 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
             <h4>Answer:</h4>
             <p><strong>Original: </strong>{answer}</p>
             <p><strong>Final: </strong>{updatedDataset.answer}</p>
-            <p><strong>Range: </strong>{answer_start}:{answer_end}</p>
+            <p><strong>Original: </strong>{answer_start}:{answer_end}</p>
             <p><strong>Final: </strong>{updatedDataset.answer_start}:{updatedDataset.answer_end}</p>
             <TextHighlighter
                 key={updatedDataset.context}
