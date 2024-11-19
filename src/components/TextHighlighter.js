@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const TextHighlighter = ({ inputText, defaultText, onHighlightChange }) => {
+const TextHighlighter = ({ inputText, defaultText, onHighlightChange, defaultStartIndex, defaultEndIndex }) => {
   const [text, setText] = useState(inputText);
   const [highlightedText, setHighlightedText] = useState(defaultText);
-  const [startIndex, setStartIndex] = useState(-1);
-  const [endIndex, setEndIndex] = useState(-1);
+  const [startIndex, setStartIndex] = useState(defaultStartIndex);
+  const [endIndex, setEndIndex] = useState(defaultEndIndex);
   const textRef = useRef(null);
 
   const handleTextChange = (e) => {
@@ -17,15 +17,25 @@ const TextHighlighter = ({ inputText, defaultText, onHighlightChange }) => {
     if (selectedText) {
       const start = selection.anchorOffset;
       const end = selection.focusOffset;
+      if(start < 0){
+        start = 0
+      }
       setStartIndex(start);
       setEndIndex(end);
       setHighlightedText(selectedText);
-      onHighlightChange(selectedText); // Update the highlighted text in the parent
+      onHighlightChange({
+        "text": selectedText,
+        "start_index": start,
+        "end_index": end
+      }); // Update the highlighted text in the parent
     }
   };
 
   const highlightSubstring = (text, substring) => {
+    console.log(substring)
+    console.log(text)
     const parts = text.split(substring);
+    console.log(parts)
     if (parts.length > 1) {
       return (
         <>
@@ -40,10 +50,18 @@ const TextHighlighter = ({ inputText, defaultText, onHighlightChange }) => {
 
   useEffect(() => {
     if (highlightedText) {
-      const start = text.indexOf(highlightedText);
-      const end = start + highlightedText.length;
+      var start = text.indexOf(highlightedText);
+      var end = start + highlightedText.length;
+      if(start < 0){
+        start = 0
+      }
       setStartIndex(start);
       setEndIndex(end);
+      onHighlightChange({
+        "text": highlightedText,
+        "start_index": start,
+        "end_index": end
+      })
     }
   }, [highlightedText, text]);
 
@@ -51,7 +69,7 @@ const TextHighlighter = ({ inputText, defaultText, onHighlightChange }) => {
     <div>
       <div
         ref={textRef}
-        contentEditable={true}
+        contentEditable={false}
         onInput={handleTextChange}
         onMouseUp={handleHighlightText}
         style={{
