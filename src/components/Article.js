@@ -7,6 +7,7 @@ import Accordion from 'react-bootstrap/Accordion';
 import { supabase } from '../utils/supabaseClient';
 import { ToastContainer, toast } from 'react-toastify';
 
+
 export default function Article (){
     const { id } = useParams(); // Extract the 'id' parameter from the route
     const [article, setArticle] = useState({
@@ -18,12 +19,17 @@ export default function Article (){
       "body": "",
       "pseudonymized_body": "",
       "pseudonymized_title": "",
-      "updated_on":""
+      "updated_on":"",
+      "updated_by":""
   });
+
+  const [name, setName] = useState("");
+
   const [dataset, setDataset] = useState([])
   const [updatedDataset, setUpdatedDataset] = useState(dataset);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [btnEnable, setBtnEnable] = useState(true);
 
   const toggleCollapse = () => {
     setIsOpen(!isOpen);
@@ -52,6 +58,7 @@ export default function Article (){
       console.error('Error fetching data:', error);
     } else {
       setArticle(data[0])
+      setName(data[0]["updated_by"])
     }
   };
 
@@ -61,7 +68,8 @@ export default function Article (){
     const { data, error } = await supabase
       .from('questions') // Replace with your table name
       .select('*')
-      .eq('article_id', id);
+      .eq('article_id', id)
+      .order('id', { ascending: true })
 
     if (error) {
       console.error('Error fetching data:', error);
@@ -72,35 +80,24 @@ export default function Article (){
     }
   };
 
-  // const updateQuestions = async (questions) => {
-  //   try {
-  //     // Loop over each question and perform an update
-  //     for (let question of dataset) {
-  //       const { data, error } = await supabase
-  //         .from('questions') // Table name
-  //         .update({
-  //           context: question.context,
-  //           answer: question.answer,
-  //           context_start: question.context_start,
-  //           context_end: question.context_end,
-  //           answer_start: question.answer_start,
-  //           answer_end: question.answer_end,
-  //         })
-  //         .eq('id', question.id); // Update where the question ID matches
+  const updateArticle = async () => {
+    const { data, error } = await supabase
+      .from('articles') // Replace with your table name
+      .update({ 
+        updated_by: name,
+        updated_on: new Date().toISOString()
+       }) // Specify the column and new value
+      .eq('id', id); // Match the row with the given id
   
-  //       if (error) {
-  //         console.error('Error updating question:', error);
-  //       } else {
-  //         console.log('Updated question:', data);
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error('Error in updating questions:', err);
-  //   }
-  // };
-
+    if (error) {
+      console.error('Error updating data:', error);
+    } else {
+      console.log('Article updated successfully:', data);
+    }
+  };
+  
   const bulkUpdateQuestions = async () => {
-    console.log(updatedDataset)
+
     try {
       const { data, error } = await supabase
         .from('questions')
@@ -122,6 +119,21 @@ export default function Article (){
     }
   };
 
+
+  const saveChanges = async () => {
+
+    if(name==""){
+      toast.error("Add name.")
+      setBtnEnable(true)
+      return
+    }
+
+    setBtnEnable(false)
+
+    await bulkUpdateQuestions()
+    await updateArticle()
+  }
+
   
 
     useEffect(() => {
@@ -134,12 +146,25 @@ export default function Article (){
     }, [updatedDataset])
 
     return (
-        <div>
+        <div className="mt-5">
             <ToastContainer />
             <h1>{article.pseudonymized_title}</h1>
             <p>Article ID: {article.id}</p>
             <p>Article Link: <a href={article.url} target="_blank">{article.url}</a></p>
-
+            <p>
+            Last updated: {
+              new Date(new Date(article.updated_on).getTime() + 8 * 60 * 60 * 1000) // Add 8 hours in milliseconds
+                .toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  hour12: true,
+                })
+            }
+          </p>
             <div>
               <button
                 className="btn btn-primary mb-3"
@@ -180,12 +205,48 @@ export default function Article (){
             }
             </Accordion>
 
-          <button 
-            className="btn btn-primary mb-3 mt-3"
-            onClick={bulkUpdateQuestions}
-          >
-              Update Questions
-          </button>
+            <div className="mt-5">
+              {/* <input
+                type="text"
+                className="form-control mb-3 mt-3"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              /> */}
+          <p>Updated by:</p>
+          <select
+                  className="form-control mb-3 mt-3"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                >
+                  <option value="" disabled>
+                    Select your name
+                  </option>
+                  <option value="Jeric">Jeric</option>
+                  <option value="Sheldon">Sheldon</option>
+                  <option value="Arwin">Arwin</option>
+                  <option value="Louise">Louise</option>
+                  <option value="Levi">Levi</option>
+                  <option value="Renier">Renier</option>
+                  <option value="Ian">Ian</option>
+                  <option value="Philippe">Philippe</option>
+                  <option value="Clelia">Clelia</option>
+                  <option value="Jilliane">Jilliane</option>
+                  <option value="Adrian">Adrian</option>
+                  <option value="Carl">Carl</option>
+                  <option value="Jourdan">Jourdan</option>
+                  <option value="Romella">Romella</option>
+                  <option value="Jhoanna">Jhoanna</option>
+            </select> 
+            <button 
+              className="btn btn-primary mb-3 mt-3"
+              onClick={saveChanges}
+              disabled={!btnEnable}
+            >
+                Update Questions
+            </button>
+            </div>
+
         </div>
     );
 };
