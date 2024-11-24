@@ -20,7 +20,8 @@ export default function Article (){
       "pseudonymized_body": "",
       "pseudonymized_title": "",
       "updated_on":"",
-      "updated_by":""
+      "updated_by":"",
+      "assigned_to":""
   });
 
   const [name, setName] = useState("");
@@ -148,6 +149,7 @@ export default function Article (){
     return (
         <div className="mt-5">
             <ToastContainer />
+            <p className = "mb-5">  Assigned to: <strong>{article.assigned_to || "No one assigned yet"}</strong></p>
             <h1>{article.pseudonymized_title}</h1>
             <p>Article ID: {article.id}</p>
             <p>Article Link: <a href={article.url} target="_blank">{article.url}</a></p>
