@@ -21,7 +21,8 @@ export default function Article (){
       "pseudonymized_title": "",
       "updated_on":"",
       "updated_by":"",
-      "assigned_to":""
+      "assigned_to":"",
+      "unusable": false
   });
 
   const [name, setName] = useState("");
@@ -37,7 +38,7 @@ export default function Article (){
   };
 
   const handleDatasetChange = (updatedItem) => {
-    console.log(updatedDataset)
+    console.log(updatedItem)
     setUpdatedDataset(prevDataset => {
       // Update the specific dataset item
       return prevDataset.map(item =>
@@ -143,7 +144,7 @@ export default function Article (){
     }, []);
 
     useEffect(()=>{
-      // console.log(updatedDataset)
+      console.log(updatedDataset)
     }, [updatedDataset])
 
     return (
@@ -192,7 +193,9 @@ export default function Article (){
             <Accordion defaultActiveKey="0">
             {
                 dataset.map((item, index) => (
-                    <Accordion.Item eventKey={index}>
+                    <Accordion.Item 
+                      eventKey={index}
+                    >
                         <Accordion.Header>Question #{item.id}: {item.question}</Accordion.Header>
                         <Accordion.Body>
                         <QuestionAnswer
@@ -206,15 +209,26 @@ export default function Article (){
                 ))
             }
             </Accordion>
+          
 
-            <div className="mt-5">
-              {/* <input
-                type="text"
-                className="form-control mb-3 mt-3"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              /> */}
+          {/* Section to display unusable questions */}
+        <h4 className="mt-5 text-danger">Unusable Questions</h4>
+        <div>
+            {
+                updatedDataset.filter(item => item.unusable).length > 0 ? (
+                  updatedDataset
+                        .filter(item => item.unusable)
+                        .map((item) => (
+                            <p key={item.id}>
+                                Question #{item.id}: {item.question}
+                            </p>
+                        ))
+                ) : (
+                    <p>No unusable questions found.</p>
+                )
+            }
+        </div>
+          <div className="mt-5">
           <p>Updated by:</p>
           <select
                   className="form-control mb-3 mt-3"

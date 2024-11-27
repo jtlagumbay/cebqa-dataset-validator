@@ -29,7 +29,7 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
         }));
     }, []);
 
-        const handleQuestionChange = (e) => {
+    const handleQuestionChange = (e) => {
         const newQuestion = e.target.value;
         setUpdatedDataset(prevState => ({
             ...prevState,
@@ -37,6 +37,12 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
         }));
     };
 
+    const handleUnusableChange = (e) => {
+        setUpdatedDataset(prevState => ({
+            ...prevState,
+            "unusable": !prevState.unusable,
+        }));
+    };
     useEffect(() => {
         // console.log("Updated dataset:", updatedDataset); // Check updatedDataset here
         handleDatasetChange(updatedDataset);
@@ -54,7 +60,7 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
                 className="form-control" 
                 placeholder="Question"
             />
-            <h4>Context</h4>
+            <h4 className="mt-2">Context</h4>
             <p><strong>Original: </strong>{context}</p>
             <p><strong>Final: </strong>{updatedDataset.context}</p>
             <p><strong>Original: </strong>{context_start}:{context_end}</p>
@@ -80,6 +86,22 @@ export default function QuestionAnswer ({ article, dataset, handleDatasetChange}
                 defaultStartIndex={answer_start}
                 defaultEndIndex={answer_end}
             />
+
+            <h4>!!! UNUSABLE QUESTION.</h4>
+            <div className="form-check">
+                <input 
+                    type="checkbox" 
+                    className="form-check-input" 
+                    id="usableCheck" 
+                    checked={updatedDataset.unusable}
+                    onChange={(e) => {handleUnusableChange(e)}}
+                />
+                <label className="form-check-label" htmlFor="usableCheck">
+                <strong>Check this box only if the question, context, and answer are completely unrelated to the article.</strong> If any component (Question, Context, or Answer) is incorrect but can be corrected, please make the necessary adjustments instead and leave the box unchecked.
+                </label>
+            </div>
+
+
         </div>
     );
 };
