@@ -12,14 +12,39 @@ const Status = () => {
   const fetchData = async () => {
     try {
       // Fetch all articles from the 'articles' table
-      const { data: articles, error } = await supabase
-        .from("articles")
-        .select("*")
-        .order('id', { ascending: true });
+      // const { data: articles, error } = await supabase
+      //   .from("articles")
+      //   .select("id, assigned_to, updated_by")
+      //   .order('id', { ascending: true })
+      //   .range(0, 1800);
 
-      if (error) {
-        console.error("Error fetching articles:", error);
-      } else {
+      let articles = [];
+      let start = 0;
+      const step = 1000; // Fetch 1000 rows at a time
+      let fetchMore = true;
+
+      while (fetchMore) {
+        const { data, error } = await supabase
+          .from("articles")
+          .select("id, assigned_to, updated_by")
+          .order('id', { ascending: true })
+          .range(start, start + step - 1);
+
+        if (error) {
+          console.error(error);
+          break;
+        }
+
+        if (data && data.length > 0) {
+          articles = [...articles, ...data];
+          start += step;
+        } else {
+          fetchMore = false; // Exit loop if no more rows are returned
+        }
+      }
+
+
+      if (articles) {
         console.log(articles)
         const userStats = {}; // To store finished/assigned stats for each user
 
