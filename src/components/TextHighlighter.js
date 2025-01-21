@@ -70,6 +70,7 @@ const TextHighlighter = ({ inputText, defaultText, onHighlightChange, defaultSta
         contentEditable={false}
         onInput={handleTextChange}
         onMouseUp={handleHighlightText}
+        onTouchEnd={handleHighlightText}
         style={{
           border: "1px solid #ccc",
           padding: "10px",
