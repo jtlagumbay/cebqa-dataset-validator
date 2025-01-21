@@ -238,6 +238,8 @@ export default function Article (){
                   <option value="" disabled>
                     Select your name
                   </option>
+                  <option value="Jhoanna">Jhoanna</option>
+                  <option value="Nicole">Nicole</option>
                   <option value="Jeric">Jeric</option>
                   <option value="Sheldon">Sheldon</option>
                   <option value="Arwin">Arwin</option>
@@ -252,7 +254,6 @@ export default function Article (){
                   <option value="Carl">Carl</option>
                   <option value="Jourdan">Jourdan</option>
                   <option value="Romella">Romella</option>
-                  <option value="Jhoanna">Jhoanna</option>
             </select> 
             <button 
               className="btn btn-primary mb-3 mt-3"
